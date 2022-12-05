@@ -1,7 +1,3 @@
-import Head from 'next/head';
-
-import { useState, FormEvent } from 'react';
-
 import styles from '../../styles/Home.module.css';
 import { ResultsProps } from '../data';
 
