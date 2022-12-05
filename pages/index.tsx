@@ -1,79 +1,97 @@
 import Head from 'next/head';
-import Image from 'next/image';
 
 import { useState, FormEvent } from 'react';
 
 import styles from '../styles/Home.module.css';
+import Header from './components/Header';
+import Query from './components/Query';
+import Results from './components/Results';
 
 export default function Home() {
-  const [regex, setRegex] = useState('');
-  const [result, setResult] = useState();
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [engRequested, setEngRequested] = useState(false);
+  const [resultFound, setResultFound] = useState(false);
+  const [error, setError] = useState('');
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    setEngRequested(false);
+    setResultFound(false);
+    setResult('');
 
-    const response = await fetch('/api/generate', {
+    const action = e.nativeEvent.submitter.value;
+    if(action === 'To English') {
+      setEngRequested(true);
+    } else {
+      setEngRequested(false);
+    }
+
+    await fetch('/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ regex: regex }),
+      body: JSON.stringify({
+        input: input,
+        action: action,
+      }),
     })
+      .then((res) => res.json())
+      .then((data) => {
+        setLoading(false)
+        setResult(data.result)
+        setResultFound(true)
+      })
+      .catch((err) => {
+        setLoading(false)
+        setResultFound(true)
+        setError(err.message);
+      })
 
-    const data = await response.json();
-    setResult(data.result);
-    setRegex('');
   }
 
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <Head>
-        <title>Regex, Help me!</title>
-        <meta name="description" content="A GPT-powered regex tutor" />
+        <title>Regex-help me! - translate regex into English</title>
+        <meta name="description" content="Regex Help Me is a GPT-powered regex AI tool to translate regex from plain English and vice versa." />
+        <meta name="title" content="Regex, Help me! - translate regex into English" />
+        <meta name='url' content='https://regexhelp.me' />
+        <meta name='site_name' content='Regex - help me!' />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Ugh regex... help me!
-        </h1>
+      <div className={styles.header}>
+        <Header />
+      </div>
 
-        <h2>
-          I'm your friendly regex tutor. I'll help translate regex into plain English and show you how to write your expression in non-regex code.
-        </h2>
+      <div className={styles.query}>
+        <Query
+          onSubmit={onSubmit}
+          input={input}
+          setInput={setInput}
+          loading={loading}
+        />
+      </div>
 
-        <div className={styles.grid}>
-          <form onSubmit={onSubmit}>
-            <input
-              type="text"
-              id="regex"
-              name="regex"
-              placeholder="Enter your regex here"
-              value={regex}
-              onChange={(e) => setRegex(e.target.value)}
-            />
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
-
-        <div className={styles.result}>
-          result:
-          {result}
-        </div>
-      </main>
+      <div className={styles.results}>
+        {!loading && (
+          <Results
+            engRequested ={engRequested}
+            resultFound={resultFound}
+            result={result}
+            error={error}
+          />
+        )}
+      </div>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
+          Disclaimer: This AI is powered by <a href="https://openai.com/" target="_blank" rel="noreferrer noopener">OpenAI</a>. 
+          It is not perfect, and it is subject to return surprising results. Use at your own risk.
       </footer>
-    </div>
+    </main>
   )
 }

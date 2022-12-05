@@ -6,24 +6,24 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const respondToPrompt = async (req: VercelRequest, res: VercelResponse) => {
-    // check if the prompt is a valid regex
-    const regex = req.body.regex;
-    if(isRegexValid(regex)) {
-        // check if the prompt is in the cache first
-        const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: generatePrompt(regex),
-        top_p: 0.1,
-        max_tokens: 150,
-        });
-        res.status(200).json({ result: completion.data.choices[0].text });
-    } else {
-        res.status(200).json({ result: "Sorry, I received an invalid regular expression. Please try again." });
-    }
+    const translateToRegex = req.body.action === 'To Regex';
+
+    const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: generatePrompt(req.body.input, translateToRegex),
+    top_p: 0.1,
+    max_tokens: 150,
+    });
+
+    res.status(200).json({ result: completion.data.choices[0].text });
 }
 
-const generatePrompt = (regex: string) : string => {
-    return `Explain this regex in plain English:${regex} can you simplify this regex?`;
+const generatePrompt = (input: string, toRegex: boolean) : string => {
+    if(toRegex) {
+        return `Regex that ${input}`;
+    } else {
+        return `Explain this regex in plain English:${input}`;
+    }
 }
 
 const isRegexValid = (regex: string): boolean => {
