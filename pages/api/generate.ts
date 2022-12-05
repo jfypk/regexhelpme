@@ -26,13 +26,4 @@ const generatePrompt = (input: string, toRegex: boolean) : string => {
     }
 }
 
-const isRegexValid = (regex: string): boolean => {
-    try {
-        new RegExp(regex);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
 export default respondToPrompt;
