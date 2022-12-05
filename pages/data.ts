@@ -13,3 +13,9 @@ export declare interface ResultsProps {
   result: string;
   error: string;
 }
+
+export declare interface EventProps extends Event {
+  submitter: {
+    value: string;
+  };
+}
