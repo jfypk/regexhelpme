@@ -24,6 +24,9 @@ form textarea {
   font-weight: 300;
   font-size: 1rem;
   margin-bottom: 2rem;
+  border: solid;
+  border-color: grey;
+  border-width: 1px;
 }
 
 form input[type="submit"] {
@@ -68,5 +71,8 @@ form .submitContainer .loadingContainer {
   body {
     color: white;
     background: black;
+  }
+  form textarea {
+    border: none;
   }
 }
