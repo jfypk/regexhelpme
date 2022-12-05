@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 import Header from './components/Header';
 import Query from './components/Query';
 import Results from './components/Results';
-import { EventProps } from './data';
+import { EventProps } from '../data';
 
 export default function Home() {
   const [input, setInput] = useState('');

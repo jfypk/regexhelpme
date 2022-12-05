@@ -1,5 +1,5 @@
 import styles from '../../styles/Home.module.css';
-import { ResultsProps } from '../data';
+import { ResultsProps } from '../../data';
 
 export default function Results(props: ResultsProps) {
   const Message = () => {

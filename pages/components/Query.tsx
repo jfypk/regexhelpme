@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { QueryProps } from '../data';
+import { QueryProps } from '../../data';
 
 export default function Query(props: QueryProps) {
   const placeholderText = 
